@@ -243,7 +243,12 @@ if(!isset($_REQUEST['state'])) {
 
             require('src/dnsquery.php');
             exit;
+        } else if($_REQUEST['mode'] == "locations") {
 
+            // LIST LOCATIONS
+
+            require('src/locations.php');
+            exit;
         } else {
             die("Error: illegal mode\n");
         }

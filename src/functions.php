@@ -143,6 +143,20 @@ function get_groupowner_email($gid) {
 
 }
 
+function get_location_name($lid) {
+    if ($lid == "" ) return "";
+
+    $pdo = VDB::singleton();
+    $result = $pdo->query("select location from locations where location_id='$lid'")
+        or die(print_r($pdo->errorInfo()));
+    if ($result->rowCount() > 0) {
+        $row = $result->fetch();
+        return $row['location'];
+    } else {
+        return '';
+    }
+}
+
 function check_email_format($address) {
 
     $result = preg_match('/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*$/',

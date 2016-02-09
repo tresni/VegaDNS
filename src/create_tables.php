@@ -84,8 +84,25 @@ $q = "CREATE TABLE records (
   weight int(4) default NULL,
   port int(4) default NULL,
   ttl int(11) NOT NULL default '86400',
+  location_id int(11) default NULL,
   UNIQUE KEY records_id (record_id),
   KEY records_idx (domain_id,record_id,host)
+)";
+$pdo->query($q) or die(print_r($pdo->errorInfo()));
+
+$q = "CREATE TABLE locations (
+  location_id int(11) NOT NULL auto_increment,
+  location varchar(2) NOT NULL default '',
+  UNIQUE KEY location_id (location_id),
+  UNIQUE KEY location (location)
+)";
+$pdo->query($q) or die(print_r($pdo->errorInfo()));
+
+$q = "CREATE TABLE prefixes (
+  prefix_id int(11) NOT NULL auto_increment,
+  location_id int(11) NOT NULL,
+  prefix varchar(512) NOT NULL default '',
+  UNIQUE KEY prefix_id (prefix_id)
 )";
 $pdo->query($q) or die(print_r($pdo->errorInfo()));
 

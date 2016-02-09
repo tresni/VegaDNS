@@ -46,6 +46,18 @@
         <td>TTL</td>
         <td><input size=7 maxlenth=20 type="text" name="ttl" value="{$ttl}">
     </tr>
+
+    {if $locations}
+    <tr bgcolor="#eeeeee">
+        <td>Location <small>(leave blank to apply to all queries)</small></td>
+        <td><select name="location">
+                <option {if $loc.location == ""}selected{/if}>
+            {foreach from=$locations item=loc}
+                <option value="{$loc.location_id}" {if $loc.location_id == $location}selected{/if}>{$loc.location}
+            {/foreach}
+        </select>
+    </tr>
+    {/if}
     </table>
 </td></tr>
 </table>
