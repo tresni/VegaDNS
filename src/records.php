@@ -481,12 +481,11 @@ if(!isset($_REQUEST['record_mode']) || $_REQUEST['record_mode'] == 'delete_cance
     $stmt = $pdo->query($q) or die(print_r($pdo->errorInfo()));
     $row = $stmt->fetch();
 
-    $smarty->assign('type', get_type($row['type']));
-    $smarty->assign('host', $row['host']);
+    $smarty->assign('target', get_type($row['type']) . " record " . $row['host']);
     $smarty->assign('cancel_url', "$base_url&mode=records&domain=".urlencode($domain)."&record_mode=delete_cancelled");
     $smarty->assign('delete_url', "$base_url&mode=records&record_mode=delete_now&record_id=".$row['record_id']."&domain=".urlencode($domain));
     $smarty->display('header.tpl');
-    $smarty->display('delete_record_confirm.tpl');
+    $smarty->display('delete_confirmation.tpl');
     $smarty->display('footer.tpl');
     exit;
 

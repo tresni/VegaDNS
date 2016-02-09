@@ -376,11 +376,11 @@ if(!isset($_REQUEST['domain_mode']) || $_REQUEST['domain_mode'] == 'delete_cance
 
     $row = $stmt->fetch();
 
-    $smarty->assign('domain', $_REQUEST['domain']);
+    $smarty->assign('target', $_REQUEST['domain']);
     $smarty->assign('cancel_url', "$base_url&mode=domains&domain_mode=delete_cancelled");
     $smarty->assign('delete_url', "$base_url&mode=domains&domain_mode=delete_now&domain_id=".$_REQUEST['domain_id']."&domain=".$_REQUEST['domain']);
     $smarty->display('header.tpl');
-    $smarty->display('delete_domain_confirm.tpl');
+    $smarty->display('delete_confirmation.tpl');
     $smarty->display('footer.tpl');
     exit;
 } else if($_REQUEST['domain_mode'] == 'delete_now') {

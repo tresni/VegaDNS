@@ -310,12 +310,12 @@ if($_REQUEST['user_mode'] == 'edit_account') {
         $stmt = $pdo->query($q) or die(print_r($pdo->errorInfo()));
         $row = $stmt->fetch();
 
-        $smarty->assign('name', $row['First_Name'] ." ".$row['Last_Name']);
+        $smarty->assign('target', $row['First_Name'] ." ".$row['Last_Name']);
         $smarty->assign('cancel_url', "$base_url&mode=users&user_mode=cancelled");
         $smarty->assign('delete_url', "$base_url&mode=users&user_mode=delete_now&cid=".$row['cid']);
 
         $smarty->display('header.tpl');
-        $smarty->display('delete_user_confirm.tpl');
+        $smarty->display('delete_confirmation.tpl');
         $smarty->display('footer.tpl');
         exit;
 
