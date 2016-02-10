@@ -21,15 +21,37 @@ if(!preg_match('/.*\/index.php$/', $_SERVER['PHP_SELF'])) {
     exit;
 }
 
+$out = "";
 
+// build locations!
+$q = "SELECT l.location, p.prefix FROM locations l
+        LEFT JOIN prefixes p
+            ON p.location_id = l.location_id
+        ORDER BY l.location DESC";
 
-
+$stmt = $pdo->query($q) or die(print_r($pdo->errorInfo()));
+while ($row = $stmt->fetch()) {
+    if (preg_match("/^([0-9a-fA-F]{4}:){0,7}[0-9a-fA-F]{4}$/", $row['prefix']) && $use_ipv6) {
+        $out .= "%s{$row['location']}:".str_replace(":", "", $row['prefix']) . "\n";
+    }
+    else if (preg_match("/^([0-9]{1,3}\.){0,3}[0-9]{1,3}$/", $row['prefix'])) {
+        $out .= "%{$row['location']}:{$row['prefix']}\n";
+    }
+    else {
+        $out .= "#Invalid prefix: %{$row['location']}:{$row['prefix']}\n";
+    }
+}
 
 
 // build data
-$q = "select a.domain, b.host, b.type, b.val, b.distance, b.weight, b.port, b.ttl  from domains a left join records  b on a.domain_id = b.domain_id where a.status='active' order by a.domain, b.type, b.host, b.val";
+$q = "select a.domain, b.host, b.type, b.val, b.distance, b.weight, b.port, b.ttl, c.location
+    from domains a
+    left join records b
+        on a.domain_id = b.domain_id
+    left join locations c
+        on b.location_id = c.location_id
+    where a.status='active' order by a.domain, b.type, b.host, b.val";
 $stmt = $pdo->query($q) or die(print_r($pdo->errorInfo()));
-$out = "";
 
 $lastdomain = "";
 while($row = $stmt->fetch()) {

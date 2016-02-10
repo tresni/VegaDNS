@@ -249,6 +249,12 @@ if(!isset($_REQUEST['state'])) {
 
             require('src/locations.php');
             exit;
+        } else if($_REQUEST['mode'] == "prefixes") {
+
+            // LIST LOCATIONS
+
+            require('src/prefixes.php');
+            exit;
         } else {
             die("Error: illegal mode\n");
         }

@@ -341,7 +341,7 @@ function ipv6_to_octal($ip) {
     return $out;
 }
 
-function ipv6_to_ptr_record($ip, $domain, $ttl) {
+function ipv6_to_ptr_record($ip, $domain, $ttl,$location) {
     $ip    = uncompress_ipv6($ip);
     $parts = array_reverse(explode(':', $ip));
 
@@ -352,7 +352,7 @@ function ipv6_to_ptr_record($ip, $domain, $ttl) {
         }
     }
 
-    return '^' . implode('.', $characters) . '.ip6.arpa:' . $domain . ':' . $ttl . "\n";
+    return '^' . implode('.', $characters) . '.ip6.arpa:' . $domain . ':' . $ttl . "::" . $location ."\n";
 }
 
 function verify_record($name,$type,$address,$distance,$weight,$port,$ttl) {
@@ -657,31 +657,31 @@ function build_data_line($row,$domain) {
     global $use_ipv6;
 
     if($row['type'] == 'A') {
-        $s = "+".$row['host'].":".$row['val'].":".$row['ttl']."\n";
+        $s = "+".$row['host'].":".$row['val'].":".$row['ttl']."::".$row['location']."\n";
     } else if($row['type'] == '=') {
-        $s = "=".$row['host'].":".$row['val'].":".$row['ttl']."\n";
+        $s = "=".$row['host'].":".$row['val'].":".$row['ttl']."::".$row['location']."\n";
     } else if($row['type'] == 'M') {
-        $s = "@".$row['host']."::".$row['val'].":".$row['distance'].":".$row['ttl']."\n";
+        $s = "@".$row['host']."::".$row['val'].":".$row['distance'].":".$row['ttl']."::".$row['location']."\n";
     } else if($row['type'] == 'N') {
-        $s = "&".$row['host']."::".$row['val'].":".$row['ttl']."\n";
+        $s = "&".$row['host']."::".$row['val'].":".$row['ttl']."::".$row['location']."\n";
     } else if($row['type'] == 'P') {
-        $s = "^".$row['host'].":".$row['val'].":".$row['ttl']."\n";
+        $s = "^".$row['host'].":".$row['val'].":".$row['ttl']."::".$row['location']."\n";
     } else if($row['type'] == 'T') {
-        $s = "'".$row['host'].":".str_replace(":",'\072', $row['val']).":".$row['ttl']."\n";
+        $s = "'".$row['host'].":".str_replace(":",'\072', $row['val']).":".$row['ttl']."::".$row['location']."\n";
     } else if($row['type'] == 'F') {
         $val_str = str_replace(":",'\072', $row['val']);
-        $s = ":".$row['host'].":99:\\".str_pad(decoct(strlen($row['val'])),3,0,STR_PAD_LEFT)."".$val_str.":".$row['ttl']."\n";
+        $s = ":".$row['host'].":99:\\".str_pad(decoct(strlen($row['val'])),3,0,STR_PAD_LEFT)."".$val_str.":".$row['ttl']."::".$row['location']."\n";
     } else if($row['type'] == 'C') {
-        $s = "C".$row['host'].":".$row['val'].":".$row['ttl']."\n";
+        $s = "C".$row['host'].":".$row['val'].":".$row['ttl']."::".$row['location']."\n";
     } else if($row['type'] == 'S') {
         $soa = parse_soa($row);
-        $s = "Z".$domain.":".$soa['tldhost'].":".$soa['tldemail'].":".$soa['serial'].":".$soa['refresh'].":".$soa['retry'].":".$soa['expire'].":".$soa['minimum'].":".$soa['ttl']."\n";
+        $s = "Z".$domain.":".$soa['tldhost'].":".$soa['tldemail'].":".$soa['serial'].":".$soa['refresh'].":".$soa['retry'].":".$soa['expire'].":".$soa['minimum'].":".$soa['ttl']."::".$row['location']."\n";
     } else if($row['type'] == 'V') {
-        $s = ":".$row['host'].":33:".encode_rdata('cccq',array($row['distance'],$row['weight'],$row['port'],preg_replace('/\.$/', '', $row['val']))).":".$row['ttl']."\n";
+        $s = ":".$row['host'].":33:".encode_rdata('cccq',array($row['distance'],$row['weight'],$row['port'],preg_replace('/\.$/', '', $row['val']))).":".$row['ttl']."::".$row['location']."\n";
     } else if(($row['type'] == '3' || $row['type'] == '6') && $use_ipv6) {
-        $s = ":".$row['host'].":28:".ipv6_to_octal($row['val']).":".$row['ttl']."\n";
+        $s = ":".$row['host'].":28:".ipv6_to_octal($row['val']).":".$row['ttl']."::".$row['location']."\n";
         if($row['type'] == '6') {
-            $s .= ipv6_to_ptr_record($row['val'], $row['host'], $row['ttl']);
+            $s .= ipv6_to_ptr_record($row['val'], $row['host'], $row['ttl'],$row['location']);
         }
     } else {
         $s = "\n";
